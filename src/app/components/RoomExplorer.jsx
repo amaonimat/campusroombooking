@@ -1,13 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { buildings, rooms, roomTypes } from "../data/rooms";
-import { getFavorites, saveFavorites } from "../data/browserStorage";
+import {
+  getEmptyListSnapshot,
+  getFavoritesSnapshot,
+  parseListSnapshot,
+  saveFavorites,
+  subscribeFavorites,
+} from "../data/browserStorage";
 import Icon from "./Icon";
 import RoomCard from "./RoomCard";
 
 export default function RoomExplorer() {
-  const [favorites, setFavorites] = useState([]);
+  const favoriteSnapshot = useSyncExternalStore(
+    subscribeFavorites,
+    getFavoritesSnapshot,
+    getEmptyListSnapshot,
+  );
   const [storageError, setStorageError] = useState("");
   const [query, setQuery] = useState("");
   const [building, setBuilding] = useState("All buildings");
@@ -16,13 +26,13 @@ export default function RoomExplorer() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("recommended");
 
-  useEffect(() => {
-    try {
-      setFavorites(getFavorites());
-    } catch (error) {
-      setStorageError(error instanceof Error ? error.message : "Favorites could not be loaded.");
-    }
-  }, []);
+  let favorites = [];
+  let snapshotError = "";
+  try {
+    favorites = parseListSnapshot(favoriteSnapshot, "favorite");
+  } catch (error) {
+    snapshotError = error instanceof Error ? error.message : "Favorites could not be loaded.";
+  }
 
   const visibleRooms = rooms.filter((room) => {
     const searchable = [
@@ -50,7 +60,6 @@ export default function RoomExplorer() {
       : [...favorites, roomId];
     try {
       saveFavorites(updated);
-      setFavorites(updated);
       setStorageError("");
     } catch (error) {
       setStorageError(error instanceof Error ? error.message : "Favorite could not be saved.");
@@ -118,7 +127,9 @@ export default function RoomExplorer() {
           <Icon name="heart" size={16} />
           {favoritesOnly ? "Showing favorites" : "Favorites only"}
         </button>
-        {storageError && <p className="form-error" role="alert">{storageError}</p>}
+        {(storageError || snapshotError) && (
+          <p className="form-error" role="alert">{storageError || snapshotError}</p>
+        )}
         <label className="sort-control">
           <span>Sort by</span>
           <select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>

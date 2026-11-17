@@ -1,24 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getBookings, removeBooking } from "../data/browserStorage";
+import { useState, useSyncExternalStore } from "react";
+import {
+  getBookingsSnapshot,
+  getEmptyListSnapshot,
+  parseListSnapshot,
+  removeBooking,
+  subscribeBookings,
+} from "../data/browserStorage";
 import Icon from "./Icon";
 
 export default function BookingsList() {
-  const [bookings, setBookings] = useState([]);
+  const bookingSnapshot = useSyncExternalStore(
+    subscribeBookings,
+    getBookingsSnapshot,
+    getEmptyListSnapshot,
+  );
   const [error, setError] = useState("");
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    try {
-      setBookings(getBookings());
-    } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Bookings could not be loaded.");
-    } finally {
-      setLoaded(true);
-    }
-  }, []);
+  let bookings = [];
+  let loadError = "";
+  try {
+    bookings = parseListSnapshot(bookingSnapshot, "booking");
+  } catch (snapshotError) {
+    loadError = snapshotError instanceof Error
+      ? snapshotError.message
+      : "Bookings could not be loaded.";
+  }
 
   function cancelBooking(id) {
     const booking = bookings.find((item) => item.id === id);
@@ -28,18 +36,17 @@ export default function BookingsList() {
 
     try {
       removeBooking(id);
-      setBookings((current) => current.filter((booking) => booking.id !== id));
       setError("");
     } catch (removeError) {
       setError(removeError instanceof Error ? removeError.message : "Booking could not be cancelled.");
     }
   }
 
-  if (!loaded) return <p className="loading-message">Loading your bookings…</p>;
-
   return (
     <div className="booking-list">
-      {error && <p className="form-error" role="alert">{error}</p>}
+      {(error || loadError) && (
+        <p className="form-error" role="alert">{error || loadError}</p>
+      )}
       {bookings.length === 0 ? (
         <div className="empty-state">
           <span className="empty-state__icon"><Icon name="calendar" size={27} /></span>
