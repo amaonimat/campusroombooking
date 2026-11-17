@@ -1,18 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { buildings, rooms, roomTypes } from "../data/rooms";
+import { getFavorites, saveFavorites } from "../data/browserStorage";
 import Icon from "./Icon";
 import RoomCard from "./RoomCard";
 
 export default function RoomExplorer() {
   const [favorites, setFavorites] = useState([]);
+  const [storageError, setStorageError] = useState("");
   const [query, setQuery] = useState("");
   const [building, setBuilding] = useState("All buildings");
   const [roomType, setRoomType] = useState("All spaces");
   const [minimumCapacity, setMinimumCapacity] = useState("Any size");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("recommended");
+
+  useEffect(() => {
+    try {
+      setFavorites(getFavorites());
+    } catch (error) {
+      setStorageError(error instanceof Error ? error.message : "Favorites could not be loaded.");
+    }
+  }, []);
 
   const visibleRooms = rooms.filter((room) => {
     const searchable = [
@@ -35,11 +45,16 @@ export default function RoomExplorer() {
   });
 
   function toggleFavorite(roomId) {
-    setFavorites((current) =>
-      current.includes(roomId)
-        ? current.filter((id) => id !== roomId)
-        : [...current, roomId],
-    );
+    const updated = favorites.includes(roomId)
+      ? favorites.filter((id) => id !== roomId)
+      : [...favorites, roomId];
+    try {
+      saveFavorites(updated);
+      setFavorites(updated);
+      setStorageError("");
+    } catch (error) {
+      setStorageError(error instanceof Error ? error.message : "Favorite could not be saved.");
+    }
   }
 
   return (
@@ -103,6 +118,7 @@ export default function RoomExplorer() {
           <Icon name="heart" size={16} />
           {favoritesOnly ? "Showing favorites" : "Favorites only"}
         </button>
+        {storageError && <p className="form-error" role="alert">{storageError}</p>}
         <label className="sort-control">
           <span>Sort by</span>
           <select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
