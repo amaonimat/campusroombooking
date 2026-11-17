@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { rooms } from "../data/rooms";
+import { buildings, rooms, roomTypes } from "../data/rooms";
 import Icon from "./Icon";
 import RoomCard from "./RoomCard";
 
 export default function RoomExplorer() {
   const [favorites, setFavorites] = useState([]);
   const [query, setQuery] = useState("");
+  const [building, setBuilding] = useState("All buildings");
+  const [roomType, setRoomType] = useState("All spaces");
+  const [minimumCapacity, setMinimumCapacity] = useState("Any size");
 
   const visibleRooms = rooms.filter((room) => {
     const searchable = [
@@ -16,7 +19,12 @@ export default function RoomExplorer() {
       room.type,
       ...room.amenities,
     ].join(" ").toLowerCase();
-    return searchable.includes(query.trim().toLowerCase());
+    const matchesSearch = searchable.includes(query.trim().toLowerCase());
+    const matchesBuilding = building === "All buildings" || room.building === building;
+    const matchesType = roomType === "All spaces" || room.type === roomType;
+    const matchesCapacity =
+      minimumCapacity === "Any size" || room.capacity >= Number(minimumCapacity);
+    return matchesSearch && matchesBuilding && matchesType && matchesCapacity;
   });
 
   function toggleFavorite(roomId) {
@@ -55,6 +63,30 @@ export default function RoomExplorer() {
             aria-label="Search rooms"
           />
         </label>
+        <div aria-label="Filter spaces" className="filter-row">
+          <label>
+            <span>Building</span>
+            <select value={building} onChange={(event) => setBuilding(event.target.value)}>
+              {buildings.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Space type</span>
+            <select value={roomType} onChange={(event) => setRoomType(event.target.value)}>
+              {roomTypes.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Seats</span>
+            <select value={minimumCapacity} onChange={(event) => setMinimumCapacity(event.target.value)}>
+              <option>Any size</option>
+              <option value="2">2+ people</option>
+              <option value="4">4+ people</option>
+              <option value="6">6+ people</option>
+              <option value="8">8+ people</option>
+            </select>
+          </label>
+        </div>
         <div className="room-grid">
           {visibleRooms.map((room) => (
             <RoomCard
