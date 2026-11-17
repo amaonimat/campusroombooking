@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { buildings, rooms, roomTypes } from "../data/rooms";
 import {
@@ -69,12 +70,41 @@ export default function RoomExplorer() {
   return (
     <main className="page-shell">
       <section className="hero">
-        <p className="eyebrow">YOUR CAMPUS, YOUR SPACE</p>
-        <h1>A good place to <span>get things done.</span></h1>
-        <p className="hero__copy">
-          Find your next favorite study spot. Browse cozy corners, quiet rooms,
-          and spaces made for big ideas.
-        </p>
+        <div className="hero__content">
+          <p className="eyebrow">YOUR CAMPUS, YOUR SPACE</p>
+          <h1>A good place to <span>get things done.</span></h1>
+          <p className="hero__copy">
+            Find your next favorite study spot. Browse cozy corners, quiet rooms,
+            and spaces made for big ideas.
+          </p>
+          <div className="hero__actions">
+            <Link className="primary-button" href="#rooms-heading">
+              Explore spaces <Icon name="arrow" size={17} />
+            </Link>
+            <span><Icon name="users" size={17} /> 8 spaces around campus</span>
+          </div>
+        </div>
+        <div aria-hidden="true" className="hero-art">
+          <span className="hero-art__sun" />
+          <div className="hero-art__window">
+            <span className="hero-art__view" />
+            <span className="hero-art__window-frame" />
+          </div>
+          <span className="hero-art__shelf" />
+          <div className="hero-art__desk">
+            <span className="hero-art__book hero-art__book--one" />
+            <span className="hero-art__book hero-art__book--two" />
+            <span className="hero-art__mug"><Icon name="spark" size={19} /></span>
+          </div>
+          <div className="hero-art__plant">
+            <Icon name="leaf" size={36} />
+            <span />
+          </div>
+          <div className="hero-art__note">
+            <span><Icon name="check" size={17} /></span>
+            <div><strong>Room to focus</strong><small>Your next idea starts here</small></div>
+          </div>
+        </div>
       </section>
       <section aria-labelledby="rooms-heading" className="room-section">
         <div className="section-heading">
