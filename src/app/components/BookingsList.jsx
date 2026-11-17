@@ -21,6 +21,11 @@ export default function BookingsList() {
   }, []);
 
   function cancelBooking(id) {
+    const booking = bookings.find((item) => item.id === id);
+    if (!booking || !window.confirm(`Cancel your booking for ${booking.roomName}?`)) {
+      return;
+    }
+
     try {
       removeBooking(id);
       setBookings((current) => current.filter((booking) => booking.id !== id));
