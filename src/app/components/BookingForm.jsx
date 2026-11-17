@@ -18,7 +18,6 @@ function localDateString(date) {
 }
 
 export default function BookingForm({ room }) {
-  const today = localDateString(new Date());
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -26,7 +25,7 @@ export default function BookingForm({ room }) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const date = String(formData.get("date"));
-    if (date < today) {
+    if (date < localDateString(new Date())) {
       setMessage("Choose today or a future date for your booking.");
       return;
     }
@@ -79,7 +78,14 @@ export default function BookingForm({ room }) {
       <div className="form-row">
         <label>
           <span>Date</span>
-          <input name="date" type="date" min={today} defaultValue={today} required />
+          <input
+            name="date"
+            type="date"
+            onFocus={(event) => {
+              event.currentTarget.min = localDateString(new Date());
+            }}
+            required
+          />
         </label>
         <label>
           <span>Start time</span>
