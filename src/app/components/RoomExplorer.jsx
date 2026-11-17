@@ -2,10 +2,22 @@
 
 import { useState } from "react";
 import { rooms } from "../data/rooms";
+import Icon from "./Icon";
 import RoomCard from "./RoomCard";
 
 export default function RoomExplorer() {
   const [favorites, setFavorites] = useState([]);
+  const [query, setQuery] = useState("");
+
+  const visibleRooms = rooms.filter((room) => {
+    const searchable = [
+      room.name,
+      room.building,
+      room.type,
+      ...room.amenities,
+    ].join(" ").toLowerCase();
+    return searchable.includes(query.trim().toLowerCase());
+  });
 
   function toggleFavorite(roomId) {
     setFavorites((current) =>
@@ -31,10 +43,20 @@ export default function RoomExplorer() {
             <p className="eyebrow">MADE FOR YOUR MOMENT</p>
             <h2 id="rooms-heading">Find your space</h2>
           </div>
-          <span className="result-count">{rooms.length} spaces</span>
+          <span className="result-count">{visibleRooms.length} spaces</span>
         </div>
+        <label className="search-field">
+          <Icon name="search" size={19} />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search rooms, buildings, or amenities"
+            aria-label="Search rooms"
+          />
+        </label>
         <div className="room-grid">
-          {rooms.map((room) => (
+          {visibleRooms.map((room) => (
             <RoomCard
               key={room.id}
               room={room}
