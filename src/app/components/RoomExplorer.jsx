@@ -11,6 +11,7 @@ export default function RoomExplorer() {
   const [building, setBuilding] = useState("All buildings");
   const [roomType, setRoomType] = useState("All spaces");
   const [minimumCapacity, setMinimumCapacity] = useState("Any size");
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
 
   const visibleRooms = rooms.filter((room) => {
     const searchable = [
@@ -24,7 +25,8 @@ export default function RoomExplorer() {
     const matchesType = roomType === "All spaces" || room.type === roomType;
     const matchesCapacity =
       minimumCapacity === "Any size" || room.capacity >= Number(minimumCapacity);
-    return matchesSearch && matchesBuilding && matchesType && matchesCapacity;
+    const matchesFavorites = !favoritesOnly || favorites.includes(room.id);
+    return matchesSearch && matchesBuilding && matchesType && matchesCapacity && matchesFavorites;
   });
 
   function toggleFavorite(roomId) {
@@ -87,6 +89,15 @@ export default function RoomExplorer() {
             </select>
           </label>
         </div>
+        <button
+          aria-pressed={favoritesOnly}
+          className={`filter-chip${favoritesOnly ? " is-active" : ""}`}
+          onClick={() => setFavoritesOnly((current) => !current)}
+          type="button"
+        >
+          <Icon name="heart" size={16} />
+          {favoritesOnly ? "Showing favorites" : "Favorites only"}
+        </button>
         <div className="room-grid">
           {visibleRooms.map((room) => (
             <RoomCard
