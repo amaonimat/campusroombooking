@@ -12,6 +12,7 @@ export default function RoomExplorer() {
   const [roomType, setRoomType] = useState("All spaces");
   const [minimumCapacity, setMinimumCapacity] = useState("Any size");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [sortOrder, setSortOrder] = useState("recommended");
 
   const visibleRooms = rooms.filter((room) => {
     const searchable = [
@@ -27,6 +28,10 @@ export default function RoomExplorer() {
       minimumCapacity === "Any size" || room.capacity >= Number(minimumCapacity);
     const matchesFavorites = !favoritesOnly || favorites.includes(room.id);
     return matchesSearch && matchesBuilding && matchesType && matchesCapacity && matchesFavorites;
+  }).sort((a, b) => {
+    if (sortOrder === "capacity") return b.capacity - a.capacity;
+    if (sortOrder === "name") return a.name.localeCompare(b.name);
+    return 0;
   });
 
   function toggleFavorite(roomId) {
@@ -98,6 +103,14 @@ export default function RoomExplorer() {
           <Icon name="heart" size={16} />
           {favoritesOnly ? "Showing favorites" : "Favorites only"}
         </button>
+        <label className="sort-control">
+          <span>Sort by</span>
+          <select value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
+            <option value="recommended">Recommended</option>
+            <option value="capacity">Largest capacity</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </label>
         <div className="room-grid">
           {visibleRooms.map((room) => (
             <RoomCard
