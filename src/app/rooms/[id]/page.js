@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BookingForm from "../../components/BookingForm";
 import Icon from "../../components/Icon";
 import { rooms } from "../../data/rooms";
 
@@ -45,13 +46,7 @@ export default async function RoomPage({ params }) {
             <li key={amenity}><Icon name="check" size={17} /> {amenity}</li>
           ))}
         </ul>
-        <div className="booking-placeholder">
-          <Icon name="calendar" />
-          <div>
-            <strong>Make it your study spot</strong>
-            <p>Booking options are coming right up.</p>
-          </div>
-        </div>
+        <BookingForm room={room} />
       </section>
     </main>
   );
