@@ -127,7 +127,27 @@ export default function RoomExplorer() {
             <option value="name">Name A–Z</option>
           </select>
         </label>
-        <div className="room-grid">
+        {visibleRooms.length === 0 ? (
+          <div className="empty-state empty-state--results">
+            <span className="empty-state__icon"><Icon name="search" size={25} /></span>
+            <h2>No spaces match those filters</h2>
+            <p>Try a different search or reset your filters to see every room.</p>
+            <button
+              className="secondary-button"
+              onClick={() => {
+                setQuery("");
+                setBuilding("All buildings");
+                setRoomType("All spaces");
+                setMinimumCapacity("Any size");
+                setFavoritesOnly(false);
+                setSortOrder("recommended");
+              }}
+              type="button"
+            >
+              Clear all filters
+            </button>
+          </div>
+        ) : <div className="room-grid">
           {visibleRooms.map((room) => (
             <RoomCard
               key={room.id}
@@ -136,7 +156,7 @@ export default function RoomExplorer() {
               onToggleFavorite={toggleFavorite}
             />
           ))}
-        </div>
+        </div>}
       </section>
     </main>
   );
