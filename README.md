@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Campus Rooms
 
-## Getting Started
+A campus room discovery and booking demo built with Next.js, React, and Tailwind CSS.
 
-First, run the development server:
+## Features
 
-```bash
+- Browse eight sample study, meeting, and collaboration rooms.
+- Search by room name, building, room type, and amenities.
+- Filter by building, space type, and minimum capacity; sort results by name or capacity.
+- Save favorite spaces in this browser.
+- View room details and amenities before booking.
+- Reserve one-hour time slots and review or cancel saved bookings.
+- Responsive layout with keyboard-visible focus styles and reduced-motion support.
+
+## Run locally
+
+Use Node.js and npm, then run these commands from this project directory:
+
+```powershell
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). If that port is already in use, Next.js will print the alternate local URL in the terminal.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Validate changes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm run lint
+npm run build
+```
 
-## Learn More
+## Demo data and storage
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The room catalog is sample data in `src/app/data/rooms.js`. Favorites and bookings are stored in the browser's local storage, so they are available only in the same browser profile and device. This demo does not connect to a campus scheduling system or provide shared availability, authentication, or server-side reservations. Do not enter sensitive personal information.
